@@ -1,0 +1,74 @@
+{% extends 'notes/layout.html' %}
+{% load crispy_forms_tags %}
+{% load static %}  
+
+{% block body%}
+<div class="container border p-4 rounded col-4">
+    <h2 style="color: red; text-align: center;" class="p-3">Login</h2>
+    {% if messages %}
+    <ul class="messages p-4">
+        {% for message in messages %}
+        <li{% if message.tags %} class="bg-{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <form method="post"  id="loginforms">
+       
+    {{loginForm|crispy}}
+    {% csrf_token %}
+    <input class="btn btn-success p-1" type="submit" value="login">
+
+    </form>
+    
+</div>
+
+{% load static %}  
+
+
+<script>
+
+$("#id_username").attr("placeholder","user name")
+$("#id_password").attr("placeholder","user password")
+$('#id_password').attr('type', 'password');
+$(document).ready('submit','#loginforms',function(e)
+{
+    e.preventDefault();
+    var username=$('#id_username').val();
+
+    var password=$('#id_password').val();
+    
+
+    $.ajax({
+        type:'POST',
+        url:'/login/',
+        data:{
+            
+            username:username,
+            password:password,
+            csrf:$('input[csrfmiddlewaretoken]').val(),
+        
+        
+    
+
+        },
+        success:function(response){
+            console.log(response);
+            
+        },
+    })
+
+
+})
+
+$(function() {
+  $("#div_id_username, #div_id_username *")                  // selects the element and all element nodes inside it
+    .contents()                                // selects all child nodes including tags, comments and text
+    .filter(function() {
+      return this.nodeType === Node.TEXT_NODE; // filter text nodes
+    }).remove();                               // boom!
+});
+
+
+</script>
+
+{% endblock %}

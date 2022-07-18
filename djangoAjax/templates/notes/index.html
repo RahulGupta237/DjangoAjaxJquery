@@ -1,0 +1,175 @@
+{% extends 'notes/layout.html' %}
+{% load crispy_forms_tags %}
+
+
+{% block body%}
+{% load static %}  
+
+<div  style="float:left;" class="container border p-4 rounded col-4">
+    <h2 style="color: blue; text-align: center;" class="p-3">Add notes</h2>
+    <p><strong>{{request.user.name}}</strong></p>
+    <form method="post"  id="noteform">
+    <img class="card-img"  src="{% static "images/mypics.png" %}"  width="200" 
+        height="200" alt="Card image">
+    {{form|crispy}}
+    {% csrf_token %}
+    <input class="btn btn-success p-1" type="submit" value="Add notes">
+
+    </form>
+
+    <a class="nav-link" href="{% url 'Logout'%}">Logout</a>
+</div>
+
+<!--
+<div class="container">
+    <div class="row">
+      <div class="col-sm">
+        <h2>{{request.user.username}}</h2>
+    <p>The .table class adds basic styling (light padding and horizontal dividers) to a table:</p>            
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>S.no</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in data_retrieve_frm_database %}
+        <tr>
+          <th>{{forloop.counter}}</th>
+          <td>{{i.title}}</td>
+          <td>{{i.description}}</td>
+          <td><button data="{{note.id}}" class="btn btn-primary">Edit</button></td>
+          <td><button data="{{note.id}}" class="btn btn-danger">Delete</button></td>
+        </tr>
+        {% endfor %}
+        
+      </tbody>
+    </table>
+      </div>
+        <div id="space" class="container border p-4 rounded col-4 col-sm  border-left-0">
+            <h2 style="color: blue; text-align: center;" class="p-3">Add notes</h2>
+            <p><strong>{{request.user.username}}</strong></p>
+            <form method="post"  id="noteform">
+            {{form|crispy}}
+            {% csrf_token %}
+            <input class="btn btn-success p-1" type="submit" value="Add notes">
+        
+            </form>
+        
+            <a class="nav-link" href="{% url 'Logout'%}">Logout</a>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+-->
+
+{% load static %}  
+
+<div style="width:50%; margin:auto; display: flex;" class="jumbotron jumbotron-fluid card bg-dark text-white">
+ 
+
+    <h1 style="color: red; text-align: center;" class="p-3">{{request.user.username}}</h1>
+    
+    <table class="table table-dark table-striped container">
+        <img class="card-img"  src="{% static "images/mypics.png" %}"  width="100" 
+        height="200"  alt="Card image">
+     
+      <thead>
+        <tr>
+          <th>S.no</th>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in data_retrieve_frm_database %}
+        <tr>
+          <th>{{forloop.counter}}</th>
+          <td>{{i.title}}</td>
+          <td>{{i.description}}</td>
+          <td><button data="{{note.id}}" class="btn btn-primary">Edit</button></td>
+          <td><button data="{{note.id}}" class="btn btn-danger del">Delete</button></td>
+          
+        </tr>
+        {% endfor %}
+        
+      </tbody>
+    </table>
+    </div>
+  </div>
+  
+
+{% load static %}  
+
+
+<script>
+$("#id_title").attr("placeholder","Title")
+$("#id_description").attr("placeholder","Write description")
+$(document).ready('submit','#noteform',function(e)
+{
+    e.preventDefault();
+    var username=$('#id_title').val();
+    var password=$('#id_description').val();
+    var csrf=$('input[csrfmiddlewaretoken]').val();
+    $.ajax({
+        type:'POST',
+        url:'',
+        data:{
+            
+            'title':username,
+            'description':password,
+            csrf:csrf,
+        
+        
+    
+
+        },
+        success:function(data){
+            console.log(data);
+            
+        },
+    })
+
+    
+
+
+}
+)
+function deleteUser(id) {
+  var action = confirm("Are you sure you want to delete this user?");
+  if (action != false) {
+    $.ajax({
+        url: '{% url "crud_ajax_delete" %}',
+        data: {
+            'id': id,
+        },
+        dataType: 'json',
+        success: function (data) {
+            if (data.deleted) {
+              console.log(data.deleted)
+            }
+        }
+    });
+  }
+}
+$("del").click(function(){
+  var id_del=$(this).attr(data);
+  deleteUser(id_del);
+})
+
+$(function() {
+  $("#div_id_title *, #div_id_description *")                  // selects the element and all element nodes inside it
+    .contents()                                // selects all child nodes including tags, comments and text
+    .filter(function() {
+      return this.nodeType === Node.TEXT_NODE; // filter text nodes
+    }).remove();                               // boom!
+});
+</script>
+
+{% endblock %}

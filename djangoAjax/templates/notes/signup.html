@@ -1,0 +1,78 @@
+{% extends 'notes/layout.html' %}
+{% load crispy_forms_tags %}
+
+{% block body%}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="text-{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+<div class="container border p-4 rounded col-4">
+    <h2 style="color: black;" class="p-3"><span>Register</span></h2>
+    {% if messages %}
+    <ul class="messages p-4">
+        {% for message in messages %}
+        <li{% if message.tags %} class="text-{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <form method="post" action="{% url 'signup' %}" id="signupforms">
+    {{form|crispy}}
+    {% csrf_token %}
+    <input class="btn btn-primary p-1" type="submit" value="signup">
+
+    </form>
+</div>
+{% load static %}  
+
+<script>
+
+$("#id_name").attr("placeholder","user name")
+
+$("#id_user_name").attr("placeholder","enter user name")
+$("#id_email").attr("placeholder","enter email")
+$("#id_password").attr("placeholder","enter password")
+$("#id_repassword").attr("placeholder","please enter repassword")
+$(document).ready('submit','#signupforms',function(e)
+{
+    e.preventDefault();
+    var name=$('#id_name').val();
+    var username=$('#id_user_name').val();
+    var email=$('#id_email').val();
+    var password=$('#id_password').val();
+    var repassword=$('#id_repassword').val();
+    var csrf=$('input[csrfmiddlewaretoken]').val();
+    $.ajax({
+        type:'POST',
+        url:'/signup/',
+        data:{
+            name:name,
+            username:username,
+            email:email,
+            password:password,
+            repassword:repassword,
+            csrf:csrf,
+             
+
+        },
+        success:function(response){
+            console.log(response);
+            
+        },
+    })
+
+
+})
+
+$(function() {
+  $("#div_id_name *, #div_id_user_name *, #div_id_email *, #div_id_password *, #div_id_repassword *")                  // selects the element and all element nodes inside it
+    .contents()                                // selects all child nodes including tags, comments and text
+    .filter(function() {
+      return this.nodeType === Node.TEXT_NODE; // filter text nodes
+    }).remove();                               // boom!
+});
+</script>
+{% endblock %}
